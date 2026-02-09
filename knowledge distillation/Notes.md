@@ -2,7 +2,7 @@
 
 ---
 
-Seeing Further on the Shoulders of Giants: Knowledge Inheritance for Vision Foundation Models
+## Seeing Further on the Shoulders of Giants: Knowledge Inheritance for Vision Foundation Models
 
 ![77004151846](assets/1770041518467.png)
 
@@ -18,7 +18,7 @@ Seeing Further on the Shoulders of Giants: Knowledge Inheritance for Vision Foun
 
 ---
 
-DUNE: Distilling a Universal Encoder from Heterogeneous 2D and 3D Teachers
+## DUNE: Distilling a Universal Encoder from Heterogeneous 2D and 3D Teachers
 
 ![77004225081](assets/1770042250819.png)
 
@@ -34,7 +34,7 @@ DUNE: Distilling a Universal Encoder from Heterogeneous 2D and 3D Teachers
 
 ---
 
-[DTO-KD: DYNAMIC TRADE-OFF OPTIMIZATION FOR EFFECTIVE KNOWLEDGE DISTILLATION (ICLR'2026)](https://gemini.google.com/share/95bbe6deed6a)
+## [DTO-KD: DYNAMIC TRADE-OFF OPTIMIZATION FOR EFFECTIVE KNOWLEDGE DISTILLATION (ICLR'2026)](https://gemini.google.com/share/95bbe6deed6a)
 
 challenges:
 
@@ -72,7 +72,7 @@ challenges:
 
 ---
 
-[EXPLORING KNOWLEDGE PURIFICATION IN MULTI-TEACHER KNOWLEDGE DISTILLATION FOR LLMS (ICLR' 2026)](https://gemini.google.com/share/a6c28ceaa2dd)
+## [EXPLORING KNOWLEDGE PURIFICATION IN MULTI-TEACHER KNOWLEDGE DISTILLATION FOR LLMS (ICLR' 2026)](https://gemini.google.com/share/a6c28ceaa2dd)
 
 - LLM、multi-teacher
 
@@ -95,4 +95,29 @@ challenges:
 
 ![77011615744](assets/1770116157444.png)
 
+---
+
+## Beyond Next-Token Alignment: Distilling Multimodal Large Language Models via Token Interactions
+
+- VLM
+
+- motivation: Attention patterns are different for different instructions.Most visual tokens are redundent for aligning.
+
+- ipa loss: take the attention of instruction tokens to visual tokens as weights for aligning.
+
+- tpa loss:
+  之前的蒸馏方法存在的limitation： 
+
+  ![77056446748](assets/1770564467488.png)
+  method：
+  ![77056450128](assets/1770564501287.png)
+  但是直接align这个V*V的矩阵计算开销太大，所以使用Monte Carlo进行近似估计：
+  ![77056468124](assets/1770564681245.png)
+
+weakness:(未中稿ICLR'26)
+
+- The two proposed modules, IVA and TPA, feel separate and not well-integrated. IVA is a VLM-specific technique for aligning visual-instruction interactions. TPA, however, is a general-purpose LLM distillation method for text generation. The paper does not convincingly unify them into a single coherent KD framework.
+- The performance claims are not fully supported. Ablation: The performance gain from IVA is not significant. Table 3 shows adding IVA on top of TPA only provides a minimal 0.3-point gain (66.4 to 66.7), suggesting TPA does all the heavy lifting. Efficiency: TPA adds significant training overhead (509 / 355, about 1.43x). A critical baseline is missing: training Vanilla KD for the same amount of time as TPA (e.g., on 1.43x more data). It is possible that Vanilla KD could match the performance of TPA if given the same computational budget.
+
+---
 
