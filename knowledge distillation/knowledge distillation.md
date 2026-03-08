@@ -121,3 +121,42 @@ weakness:(未中稿ICLR'26)
 
 ---
 
+## [DA-KD: Difficulty-Aware Knowledge Distillation for Efficient Large Language Models](https://gemini.google.com/share/69c27d505777)
+
+- LLM
+
+challenge：
+
+- 现有的 LLM 蒸馏方法通常忽略了样本之间的难度差异，对所有样本一视同仁，导致在“简单样本”上浪费了大量不必要的计算资源，进而推高了蒸馏成本 。
+- 如果单纯在蒸馏数据集中仅保留“困难样本”，现有的蒸馏损失函数（KD loss）会因为极端分布而面临梯度爆炸或消失的问题，且难以有效聚焦于困难样本 。
+
+method：
+![77250974604](assets/1772509746042.png)
+
+- 引入DDS对样本评分
+
+![77250958083](assets/1772509580834.png)
+
+- Stratified sampling for diversity.每个epoch都选取部分高DDS样本和部分低DDS样本（predefined τ）
+
+- Bidirectional Discrepancy Loss (BDL).使用BDL使得训练更加稳定
+  ![77251031357](assets/1772510313574.png)
+
+  ![77251049837](assets/1772510498374.png)
+
+  C(x)有界![77251066912](assets/1772510669122.png)，解决梯度消失和梯度爆炸
+  当lamda大于0.5时，C(x)在大部分情况下随着qθ递增，则对更困难的样本梯度更大，实现高效训练
+
+![77251113604](assets/1772511136046.png)
+
+![77251126668](assets/1772511266689.png)
+
+![77251127903](assets/1772511279039.png)
+
+---
+
+
+
+
+
+
