@@ -34,14 +34,27 @@
 
 - efficient global attention：ReLU attention
 
-- efficient multi-scale learning：fusing DWConvs into a single DWConv and combining all 1*1 Convs into a single 1*1 group Conv
+- efficient multi-scale learning：fusing DWConvs into a single DWConv and combining all 1\*1 Convs into a single 1\*1 group Conv
   ![77297815986](assets/1772978159860.png)
 
   ![77297817819](assets/1772978178190.png)
 
 ---
 
+## FLatten Transformer: Vision Transformer using Focused Linear Attention
 
+- 解决的问题
+  - linear attention（ReLU attention） focus ability不足，即attention map过于平滑
+    ![77302799163](assets/1773027991634.png)
+  - 使用linear attention（ReLU attention）导致的feature diversity不足，即O的秩过低（i.e $rank(O)<min(N,d)$）
+    ![77302801407](assets/1773028014078.png)
+- 针对focus ability：
+  ![77302745133](assets/1773027451336.png)
+  fp只改变向量的方向，将方向向最靠近的轴偏移
+  ![77302752692](assets/1773027526928.png)
+- 针对feature diversity：
+  ![77302758206](assets/1773027582063.png)
+  加入深度卷积，深度卷积对应的矩阵可以是满秩的，提高了$upperBound(rank(O))$
 
-
+---
 
