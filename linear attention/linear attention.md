@@ -78,4 +78,78 @@
 
 ---
 
-##
+## [mamba](https://blog.csdn.net/v_JULY_v/article/details/134923301)
+
+https://gemini.google.com/share/8d0ff3a382cc
+
+---
+
+## [Vision Mamba: Efficient Visual Representation Learning with Bidirectional State Space Model](https://gemini.google.com/share/6c49bc95716b)
+
+- mamba模型适用于对因果关系建模，处理输入图片时，同一个图片内没有因果关系，因此vision mamba选择采用forward pass和backward pass两条路径
+
+![77332254770](assets/1773322547704.png)
+
+---
+
+## [Demystify Mamba in Vision: A Linear Attention Perspective](https://gemini.google.com/share/c2fe208a97c2)
+
+- 将mamba和linear attention表达式统一成相同的形式，通过比较其不同，确定是mamba的哪个机制带来了性能提升，并将其应用到linear attention中
+  ![77348607337](assets/1773486073371.png)
+- 输入门$\Delta_i$，slightly helpful，因为$\Delta_i$只考虑当前token，而没有考虑全局的语义信息
+  ![77348776094](assets/1773487760946.png)
+- 遗忘门$\tilde{A}_i$，obvious performance improvement，但是因为引入遗忘门导致无法高效并行计算，尽管使用了mamba的硬件感知的高效算法，但吞吐依然下降严重，分析$\tilde{A}_i$的值发现，遗忘门起到的作用是局部偏置和位置信息，因此可以使用位置编码替代
+  ![77348778914](assets/1773487789141.png)
+- 捷径连接  $D\odot x_i$，可有可无，带来了 0.2 的精度微升，但吞吐量也有所下降（1152 降至 1066）
+- 注意力归一化，去掉线性注意力的归一化（分母 $Q_i Z_i$），模型精度会从 77.6 发生雪崩式下降，跌至 72.4，深层网络中个别长度较大的 token 会完全主导整个特征图
+  ![77348779941](assets/1773487799417.png)
+- 是否是多头注意力，改为单头，精度会骤降至 73.5 
+- vit和mamba宏观架构不同，用 Mamba 的块设计（融合了深度卷积、门控等）替换原本的注意力子块，精度直接拉升至 80.9
+
+![77348695383](assets/1773486953835.png)
+
+- 综合以上分析，作者设计出MILA(Mamba Inspired Linear Attention)
+
+  ![77348784001](assets/1773487840018.png)
+
+---
+
+## [SoLA-Vision: Fine-grained Layer-wise Linear Softmax Hybrid Attention](https://gemini.google.com/share/cb8c53b2d458)
+
+- linear attention虽然是O(N)复杂度，但是表达能力明显弱于softmax attention
+
+- 分析：
+  早期的linear attention：
+  ![77347399291](assets/1773473992915.png)
+  一些现代linear attention：
+  ![77347406551](assets/1773474065511.png)
+  展开之后，可以发现隐含的距离依赖
+  ![77347431384](assets/1773474313841.png)
+  以指数衰减的核为例：
+  ![77347462678](assets/1773474626786.png)
+  应用中心极限定理：
+
+  ![77347464516](assets/1773474645161.png)
+  推出感受野随层数的1/2次方提升
+
+  ![77347471750](assets/1773474717506.png)
+  分辨率较高时linear attention对四角的猫头鹰attention受到距离衰减的影响
+  ![77347563412](assets/1773475634121.png)
+
+- method：
+  ![77347494794](assets/1773474947949.png)
+
+  - 早期分辨率太高，global attention(softmax attention)太昂贵，因此选择在stage3、4插入global attention
+    ![77347613998](assets/1773476139987.png)
+  - HSB为了弥补在早期缺失的全局交互，将早期low level的特征注入到stage3中
+
+- 实验结果：
+  classification：
+  ![77347627859](assets/1773476278596.png)
+  object detection：
+  ![77347648448](assets/1773476484484.png)
+  semantic segmentation：
+  ![77347656682](assets/1773476566824.png)
+  visualization(EigenCAM)：
+
+  ![77347733824](assets/1773477338247.png)
