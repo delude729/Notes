@@ -98,7 +98,7 @@ https://gemini.google.com/share/8d0ff3a382cc
   ![77348607337](assets/1773486073371.png)
 - 输入门$\Delta_i$，slightly helpful，因为$\Delta_i$只考虑当前token，而没有考虑全局的语义信息
   ![77348776094](assets/1773487760946.png)
-- 遗忘门$\tilde{A}_i$，obvious performance improvement，但是因为引入遗忘门导致无法高效并行计算，尽管使用了mamba的硬件感知的高效算法，但吞吐依然下降严重，分析$\tilde{A}_i$的值发现，遗忘门起到的作用是局部偏置和位置信息，因此可以使用位置编码替代
+- 遗忘门$\tilde{A}_i$，obvious performance improvement，但是因为引入遗忘门导致无法高效并行计算，尽管使用了mamba的硬件感知的高效算法，但吞吐依然下降严重，分析$\tilde{A}_i$的值发现，遗忘门起到的作用是局部偏置和位置信息，因此可以使用位置编码替代（遗忘门起到的作用是让h遗忘以前的，从而使得h的信息包含更多当前局部的）
   ![77348778914](assets/1773487789141.png)
 - 捷径连接  $D\odot x_i$，可有可无，带来了 0.2 的精度微升，但吞吐量也有所下降（1152 降至 1066）
 - 注意力归一化，去掉线性注意力的归一化（分母 $Q_i Z_i$），模型精度会从 77.6 发生雪崩式下降，跌至 72.4，深层网络中个别长度较大的 token 会完全主导整个特征图
@@ -153,3 +153,36 @@ https://gemini.google.com/share/8d0ff3a382cc
   visualization(EigenCAM)：
 
   ![77347733824](assets/1773477338247.png)
+
+---
+
+## ReGLA: Efficient Receptive-Field Modeling with Gated Linear Attention Network（ACL' 25)
+
+![77356264722](assets/1773562647227.png)
+
+- challenge：linear attention缺乏局部特征提取能力
+
+- method:
+
+  - RGMA：为了解决ReLU attention局部特征提取能力的缺失，加入基于CNN的门控通道
+  - ELRF：早期阶段需要大的感受野，借鉴MobileNetV4，将7$\times$7的卷积核用$3\times3$的卷积核和$5\times5$的卷积核替代
+
+  ![77356298732](assets/1773562987322.png)
+
+  - multi-teacher kd：采用UNIC框架，dBOTft and DeiT-III for classification, DINOv2 for object detection, SAM2 for semantic segmentation, iBOT for masked modeling, ViTamin for contrastive learning, and AIMv2 for autoregressive modeling
+
+- experiments：
+  ![77356537335](assets/1773565373351.png)
+
+  ![77356539611](assets/1773565396113.png)
+
+  ![77356540525](assets/1773565405255.png)
+
+  ![77356542393](assets/1773565423936.png)
+
+  ![77356552865](assets/1773565528651.png)
+
+---
+
+
+
